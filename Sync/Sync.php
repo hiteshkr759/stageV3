@@ -1,5 +1,5 @@
 <?php
-require_once ('MysqliDb.php');
+require_once ('../GlobalFile/MSmysqliDb.php');
 class MicrosoftDatabase{
 	
 	private $host 		    = "localhost";
@@ -69,7 +69,7 @@ class MicrosoftDatabase{
 
 
 	protected function __construct() {
-		$this->db_Conn = new MysqliDb ($this->host, $this->user, $this->pwd, $this->db);
+		$this->db_Conn = new MSmysqliDb ($this->host, $this->user, $this->pwd, $this->db);
 		//print_r('I am in database');
 		//print_r($this->db_Conn);
 	}
