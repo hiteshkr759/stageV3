@@ -69,30 +69,29 @@ class MicrosoftDatabase{
 
 
 	protected function __construct() {
-		$this->db_Conn = new MSmysqliDb ($this->host, $this->user, $this->pwd, $this->db);
 		$is_localhostCheck = $this->is_localhost();
 		if(!$is_localhostCheck){
 			$this->setLiveDatabase();
 		}
-		//print_r('I am in database');
+		$this->db_Conn = new MSmysqliDb ($this->host, $this->user, $this->pwd, $this->db);
 		//print_r($this->db_Conn);
+		//die('I am stopred');
+		//print_r('I am in database');
 	}
 
 	function is_localhost() {
-	    $whitelist = array( 'http://postpage.azurewebsites.net', '::1' );
-	    if( in_array( $_SERVER['REMOTE_ADDR'], $whitelist) ){
-	    	echo "I In LIVE".$_SERVER['REMOTE_ADDR'];
+	    $whitelistIP = array( '::1' );
+	    if( in_array( $_SERVER['REMOTE_ADDR'], $whitelistIP) ){
 	        return true;
 	    }
-	    echo "I am local hjosj".$_SERVER['REMOTE_ADDR'];
 	    return false;
 	}	
 
 	function setLiveDatabase(){
-		$this->servername 	= "postpage-mysqldbserver.mysql.database.azure.com";
-		$this->username 	= "mysqldbuser@postpage-mysqldbserver";
-		$this->password 	= "admin@123";
-		$this->dbName 		= "microsoft_events_stage_v3";
+		$this->host 	= "postpage-mysqldbserver.mysql.database.azure.com";
+		$this->user 	= "mysqldbuser@postpage-mysqldbserver";
+		$this->pwd 		= "admin@123";
+		$this->db 		= "microsoft_events_stage_v3";
 	}
 
 	protected function getDbConncetion(){
