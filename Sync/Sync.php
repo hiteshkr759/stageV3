@@ -79,7 +79,7 @@ class MicrosoftDatabase{
 		//print_r('I am in database');
 	}
 
-	function is_localhost() {
+	protected function is_localhost() {
 	    $whitelistIP = array( '::1' );
 	    if( in_array( $_SERVER['REMOTE_ADDR'], $whitelistIP) ){
 	        return true;
@@ -87,7 +87,7 @@ class MicrosoftDatabase{
 	    return false;
 	}	
 
-	function setLiveDatabase(){
+	protected function setLiveDatabase(){
 		$this->host 	= "postpage-mysqldbserver.mysql.database.azure.com";
 		$this->user 	= "mysqldbuser@postpage-mysqldbserver";
 		$this->pwd 		= "admin@123";
@@ -188,6 +188,18 @@ class Sync extends MicrosoftDatabase {
 	/* GET ACESS TOKE */
 
 
+	public function trackMe($msg){
+		$mt = explode(' ', microtime());
+		// $time = ((int)$mt[1]) * 1000 + ((int)round($mt[0] * 1000));
+		$time = time();
+		echo "<hr noshade>";
+		echo "<hr >";
+		echo $time . " -- " .$msg;
+		echo "<hr>";
+		echo "<hr noshade>";
+	}
+
+
 	public function authentication($tokenUrl,$param){
 		//echo "I am callerd";
 		$getAccessToken = $this->post($tokenUrl,$param);
@@ -263,7 +275,8 @@ class Sync extends MicrosoftDatabase {
 	function printEventData($event,$key){
 		//print_r($event);
 		$key = (int) $key + 1;
-		echo "Event NO " . $key ; 
+		echo "Event NO " . $key . "<br>" ; 
+		echo "Time " . time() ; 
 		echo "<hr>";
 		echo "Event Id          ".$event['EventId']."<br>";
 		echo "Event Title       ".$event['Title']."<br>";
@@ -277,6 +290,7 @@ class Sync extends MicrosoftDatabase {
 	/* FETCH EVENTS */
 
 	public function getMicrosoftEvents($eventUrl,$param,$storeEvent=true,$header=null){
+		//$this->trackMe("getMicrosoftEvents START");
 		if(is_null($header)){
 			$header = $this->defaultHeader;
 		}
@@ -286,6 +300,8 @@ class Sync extends MicrosoftDatabase {
 		if($storeEvent){
 			$this->saveEvents();
 		}
+		//$this->trackMe("getMicrosoftEvents END");
+		//die("STOP AFTER CALL");
 		return $getEvents;
 	}
 
@@ -691,8 +707,10 @@ class Sync extends MicrosoftDatabase {
 	
 
 	public function storeRawEvent($key,$eventObject){
+		//$this->trackMe("storeRawEvent START");
 		$events = $this->modifyEventsObjects($eventObject['Events']);
 		$this->storeRawEventObject[$key] = $events;
+		//$this->trackMe("storeRawEvent END");
 	}
 
 	public function setEventObject($eventId,$eventTag,$eventObject){
@@ -724,6 +742,7 @@ class Sync extends MicrosoftDatabase {
 	}
 
 	public function normalizeFetchEvent(){
+		//$this->trackMe("normalizeFetchEvent START");
 		$rawEventObj = $this->storeRawEventObject;
 		foreach($rawEventObj as $currentTag => $events){
 			foreach($events as $event){
@@ -735,6 +754,7 @@ class Sync extends MicrosoftDatabase {
 		//die('I am stoped before Norm');
 		//echo sizeof($this->trackEventTagging);
 		//print_r($this->trackEventTagging);
+		//$this->trackMe("normalizeFetchEvent END");
 		return $this->trackEventTagging;
 		//print_r($this->storeRawEventObject);
 	}
@@ -759,6 +779,7 @@ class Sync extends MicrosoftDatabase {
 		foreach($serachEvents as $key => $event){
 			//print_r($event);	
 			//die("I am stoped");
+			//$this->trackMe("saveEvents STARTS");
 			$isOffline = $this->isOfflineEvent($event);
 			if($isOffline){
 				$eventLocation 	= 	$this->returnValue($event,$this->eventLocationFieldName);
@@ -784,8 +805,8 @@ class Sync extends MicrosoftDatabase {
 			$this->insertTag("ms_tag_product",$eventTag);
 			$this->printEventData($event,$counter);
 			$counter++;
-
-			// if($counter == 1 ){
+			//$this->trackMe("saveEvents ENDS");
+			// if($counter == 5 ){
 			// 	die('I am stoped');
 			// }
 
@@ -844,7 +865,10 @@ foreach($eventSearchQuery as $searhQuery){
 	$syncMe -> setTag($searhQuery);
 	$event 	= $syncMe -> getMicrosoftEvents($eventUrl,$getEventParam,false);
 	$syncMe -> storeRawEvent($searhQuery,$event);
-	
+
+	///die("call 1 search key");
+
+	break;
 	//$evnets = $syncMe -> getMicrosoftEvents($eventUrl,$getEventParam);
 }
 $normalizedEvents = $syncMe -> normalizeFetchEvent();
