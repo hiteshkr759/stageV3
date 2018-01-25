@@ -79,7 +79,7 @@ class MicrosoftDatabase{
 	}
 
 	function is_localhost() {
-	    $whitelist = array( 'postpage-mysqldbserver.mysql.database.azure.com', '::1' );
+	    $whitelist = array( 'http://postpage.azurewebsites.net', '::1' );
 	    if( in_array( $_SERVER['REMOTE_ADDR'], $whitelist) ){
 	        return true;
 	    }
