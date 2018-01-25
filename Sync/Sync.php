@@ -81,10 +81,10 @@ class MicrosoftDatabase{
 	function is_localhost() {
 	    $whitelist = array( 'http://postpage.azurewebsites.net', '::1' );
 	    if( in_array( $_SERVER['REMOTE_ADDR'], $whitelist) ){
-	    	echo "I In LIVE";
+	    	echo "I In LIVE".$_SERVER['REMOTE_ADDR'];
 	        return true;
 	    }
-	    echo "I am local hjosj";
+	    echo "I am local hjosj".$_SERVER['REMOTE_ADDR'];
 	    return false;
 	}	
 
