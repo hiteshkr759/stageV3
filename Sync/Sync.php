@@ -70,8 +70,27 @@ class MicrosoftDatabase{
 
 	protected function __construct() {
 		$this->db_Conn = new MSmysqliDb ($this->host, $this->user, $this->pwd, $this->db);
+		$is_localhostCheck = $this->is_localhost();
+		if(!$is_localhostCheck){
+			$this->setLiveDatabase();
+		}
 		//print_r('I am in database');
 		//print_r($this->db_Conn);
+	}
+
+	function is_localhost() {
+	    $whitelist = array( '127.0.0.1', '::1' );
+	    if( in_array( $_SERVER['REMOTE_ADDR'], $whitelist) ){
+	        return true;
+	    }
+	    return false;
+	}	
+
+	function setLiveDatabase(){
+		$this->servername 	= "postpage-mysqldbserver.mysql.database.azure.com";
+		$this->username 	= "mysqldbuser@postpage-mysqldbserver";
+		$this->password 	= "admin@123";
+		$this->dbName 		= "microsoft_events_stage_v3";
 	}
 
 	protected function getDbConncetion(){
